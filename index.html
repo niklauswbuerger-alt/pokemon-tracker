@@ -481,6 +481,7 @@ function delCustom(k){if(!confirm('Delete this custom set?'))return;delete custo
 function addTab(k,poke){var nav=document.getElementById('tabs');var add=document.querySelector('.ta');var tab=document.createElement('button');tab.className='tab';tab.id='tab-'+k;tab.innerHTML='<span class="ti">✨</span><span class="tl" style="color:var(--gd)">'+poke.substring(0,8)+'</span>';tab.onclick=function(){switchSet(k,tab);};nav.insertBefore(tab,add);}
 function getKey(){return localStorage.getItem(K+'apikey')||'';}
 function ensureKey(){var k=getKey();if(k)return k;var i=prompt('Enter your Anthropic API key to use this feature.\n\nGet one free at: console.anthropic.com\n\n(Stored only on this device)');if(i&&i.trim().startsWith('sk-ant-')){localStorage.setItem(K+'apikey',i.trim());return i.trim();}if(i)alert('Invalid key. Should start with sk-ant-');return null;}
+async function fetchCardImages(poke,cards){try{var q=encodeURIComponent('name:"'+poke+'"');var resp=await fetch('https://api.pokemontcg.io/v2/cards?q='+q+'&pageSize=250&select=id,name,set,number,images');if(!resp.ok)return cards;var data=await resp.json();var apiCards=data.data||[];var imgMap={};apiCards.forEach(function(ac){var numClean=(ac.number||'').toLowerCase();var nameKey=(ac.name||'').toLowerCase();var setKey=(ac.set&&ac.set.name?ac.set.name:'').toLowerCase();imgMap[nameKey+'|'+numClean]=ac.images&&ac.images.small?ac.images.small:null;imgMap[nameKey+'|'+setKey]=ac.images&&ac.images.small?ac.images.small:null;});return cards.map(function(c){if(c.img)return c;var numClean=(c.num||'').split('/')[0].toLowerCase();var nameKey=(c.name||'').toLowerCase();var setKey=(c.set||'').toLowerCase();var img=imgMap[nameKey+'|'+numClean]||imgMap[nameKey+'|'+setKey]||null;if(!img){for(var k in imgMap){if(k.startsWith(nameKey+'|')&&imgMap[k]){img=imgMap[k];break;}}}if(img)c.img=img;return c;});}catch(e){return cards;}}
 async function buildSet(){
   var poke=document.getElementById('ai-in').value.trim();if(!poke){alert('Enter a Pokemon name!');return;}
   var key=ensureKey();if(!key)return;
@@ -496,8 +497,12 @@ async function buildSet(){
     var k='cx-'+poke.toLowerCase().replace(/\s+/g,'-')+'-'+Date.now();
     var sd={key:k,poke:poke,label:'✨ '+poke.charAt(0).toUpperCase()+poke.slice(1)+' Master Set',cards:cards};
     custom[k]=sd;SETS[k]={data:cards,label:sd.label,tc:'cx',pfc:'pfx',builtIn:false};got[k]=new Set();
+    st.textContent='Found '+cards.length+' cards! Fetching images...';
+    cards=await fetchCardImages(poke,cards);
+    var withImgs=cards.filter(function(c){return c.img;}).length;
+    sd.cards=cards;SETS[k].data=cards;
     localStorage.setItem(K+'custom',JSON.stringify(custom));addTab(k,poke);
-    st.textContent='Found '+cards.length+' cards! Opening...';btn.textContent='Done!';
+    st.textContent='Done! '+cards.length+' cards, '+withImgs+' with images. Opening...';btn.textContent='Done!';
     setTimeout(function(){closeModal();var tab=document.getElementById('tab-'+k);if(tab)switchSet(k,tab);btn.disabled=false;btn.textContent='🔍 Research and Build Set';},1200);
   }catch(err){st.innerHTML='❌ '+(err.message||'Error')+'<br><span style="font-size:10px;color:var(--tx3)">Check connection and try again.</span>';btn.disabled=false;btn.textContent='🔍 Research and Build Set';}
 }
