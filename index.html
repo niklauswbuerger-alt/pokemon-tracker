@@ -160,6 +160,20 @@ html,body{height:100%;background:var(--bg);overscroll-behavior:none;font-family:
 .cd{background:rgba(224,80,80,.1);color:#e07070;border-color:rgba(224,80,80,.3)}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(240,192,64,.3);border-top-color:var(--gd);border-radius:50%;animation:sp .8s linear infinite;vertical-align:middle;margin-right:5px}
 @keyframes sp{to{transform:rotate(360deg)}}
+
+/* THEMED BACKGROUNDS */
+.theme-wrap{position:relative;overflow:hidden}
+.theme-hero{position:absolute;inset:0;z-index:0;pointer-events:none}
+.theme-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,18,.5) 0%,rgba(8,8,18,.93) 65%,rgba(8,8,18,1) 100%)}
+.theme-content{position:relative;z-index:1}
+.theme-noctowl .theme-hero{background:radial-gradient(ellipse at 80% 0%,rgba(144,96,224,.5) 0%,rgba(240,192,64,.2) 35%,transparent 65%)}
+.theme-surfing .theme-hero{background:radial-gradient(ellipse at 20% 0%,rgba(64,144,240,.5) 0%,rgba(48,208,128,.2) 35%,transparent 65%)}
+.theme-hoothoot .theme-hero{background:radial-gradient(ellipse at 50% 0%,rgba(48,192,192,.4) 0%,transparent 65%)}
+.theme-cameo .theme-hero{background:radial-gradient(ellipse at 50% 0%,rgba(224,96,160,.35) 0%,rgba(240,192,64,.15) 40%,transparent 65%)}
+.theme-custom .theme-hero{background:radial-gradient(ellipse at 50% 0%,rgba(144,96,224,.3) 0%,transparent 65%)}
+.card-art-float{position:absolute;z-index:2;pointer-events:none;border-radius:8px;transition:opacity .4s;top:-10px}
+.card-art-noctowl{width:85px;right:12px;transform:rotate(5deg);box-shadow:0 6px 24px rgba(0,0,0,.8),0 0 30px rgba(240,192,64,.5),0 0 60px rgba(144,96,224,.4)}
+.card-art-surfing{width:85px;left:12px;transform:rotate(-5deg);box-shadow:0 6px 24px rgba(0,0,0,.8),0 0 30px rgba(64,144,240,.5),0 0 60px rgba(48,208,128,.3)}
 </style>
 </head>
 <body>
@@ -175,7 +189,10 @@ html,body{height:100%;background:var(--bg);overscroll-behavior:none;font-family:
   </div>
 </nav>
 <div id="tracker">
-  <div class="hdr">
+  <div class="hdr theme-wrap theme-noctowl" id="hdr-wrap">
+    <div class="theme-hero"></div>
+    <div id="card-art-con"></div>
+    <div class="theme-content">
     <div class="hdr-row">
       <div class="set-title cn" id="stitle">🦉 Noctowl Master Set</div>
       <div style="display:flex;align-items:center;gap:6px">
@@ -191,6 +208,7 @@ html,body{height:100%;background:var(--bg);overscroll-behavior:none;font-family:
     </div>
     <div class="pi"><span id="ptxt">0 of 0</span><span id="pmsg">Start hunting! 🎯</span></div>
     <div class="pt"><div class="pf pfn" id="pfill" style="width:0%"></div></div>
+    </div>
   </div>
   <div class="frow">
     <button class="fb on" onclick="filt('all',this)">All</button>
@@ -212,17 +230,8 @@ html,body{height:100%;background:var(--bg);overscroll-behavior:none;font-family:
 <div class="pv2" id="pg-orders">
   <div class="pt2" style="margin-top:10px">Your Accounts</div>
   <a class="lb le" href="https://www.ebay.com/mye/myebay/purchase" target="_blank"><span style="font-size:18px">🛒</span><div><div>eBay — My Purchases</div><div style="font-size:10px;opacity:.6;margin-top:1px">View all recent orders</div></div><span class="la">›</span></a>
-  <a class="lb le" href="https://www.ebay.com/mye/myebay/watchlist" target="_blank"><span style="font-size:18px">👁️</span><div><div>eBay — Watch List</div><div style="font-size:10px;opacity:.6;margin-top:1px">Items you are watching</div></div><span class="la">›</span></a>
-  <a class="lb le" href="https://www.ebay.com/mye/myebay/bids" target="_blank"><span style="font-size:18px">🔨</span><div><div>eBay — Active Bids</div><div style="font-size:10px;opacity:.6;margin-top:1px">Auctions you are bidding on</div></div><span class="la">›</span></a>
   <a class="lb lt" href="https://store.tcgplayer.com/myaccount/orderhistory" target="_blank"><span style="font-size:18px">🃏</span><div><div>TCGPlayer — My Orders</div><div style="font-size:10px;opacity:.6;margin-top:1px">Track your TCG orders</div></div><span class="la">›</span></a>
   <a class="lb lp" href="https://www.pricecharting.com/collection" target="_blank"><span style="font-size:18px">📊</span><div><div>PriceCharting — Collection</div><div style="font-size:10px;opacity:.6;margin-top:1px">Track collection value</div></div><span class="la">›</span></a>
-  <div class="pt2">Quick Search</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
-    <a style="background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px;text-decoration:none;display:block" href="https://www.ebay.com/sch/i.html?_nkw=shining+noctowl+pokemon&_sop=12" target="_blank"><div style="font-size:12px;font-weight:700;color:var(--tx)">Shining Noctowl</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">eBay · Recent</div></a>
-    <a style="background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px;text-decoration:none;display:block" href="https://www.ebay.com/sch/i.html?_nkw=hoothoot+TG12+astral+radiance&_sop=12" target="_blank"><div style="font-size:12px;font-weight:700;color:var(--tx)">Hoothoot TG12</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">eBay · Recent</div></a>
-    <a style="background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px;text-decoration:none;display:block" href="https://www.ebay.com/sch/i.html?_nkw=surfing+pikachu+rising+rivals&_sop=12" target="_blank"><div style="font-size:12px;font-weight:700;color:var(--tx)">Surfing Pikachu</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">eBay · Recent</div></a>
-    <a style="background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px;text-decoration:none;display:block" href="https://www.tcgplayer.com/search/pokemon/product?q=noctowl&sort=price-asc" target="_blank"><div style="font-size:12px;font-weight:700;color:var(--tx)">Noctowl Singles</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">TCGPlayer · Cheapest</div></a>
-  </div>
   <div class="pt2">Price Tools</div>
   <a class="lb lu" href="https://www.psacard.com/auctionprices" target="_blank"><span style="font-size:18px">🏆</span><div><div>PSA Auction Prices</div><div style="font-size:10px;opacity:.6;margin-top:1px">Graded card history</div></div><span class="la">›</span></a>
   <a class="lb ll" href="https://www.pricecharting.com/category/pokemon-cards" target="_blank"><span style="font-size:18px">📈</span><div><div>PriceCharting</div><div style="font-size:10px;opacity:.6;margin-top:1px">Market price history</div></div><span class="la">›</span></a>
@@ -380,6 +389,9 @@ function switchSet(k,btn){
   t.className='set-title '+s.tc;
   t.textContent=s.label;
   document.getElementById('pfill').className='pf '+s.pfc;
+  var themeMap={noctowl:'theme-noctowl',hoothoot:'theme-hoothoot',surfing:'theme-surfing',cameo:'theme-cameo'};
+  var w=document.getElementById('hdr-wrap');if(w)w.className='hdr theme-wrap '+(themeMap[k]||'theme-custom');
+  var ac=document.getElementById('card-art-con');if(ac){if(k==='noctowl')ac.innerHTML='<img class="card-art-float card-art-noctowl" src="https://images.pokemontcg.io/neo4/110.png" alt="">';else if(k==='surfing')ac.innerHTML='<img class="card-art-float card-art-surfing" src="https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/tpci/PL2/PL2_114_R_EN_SM.png" alt="">';else ac.innerHTML='';}
   document.getElementById('delbtn').style.display='inline-block';
   updateStats();render();
 }
@@ -461,7 +473,7 @@ function row(c){
   var pcb=c.pc?('<a class="ab ap" href="'+c.pc+'" target="_blank" onclick="event.stopPropagation()">📊 Price Guide</a>'):'<span class="ab ap" style="opacity:.3;pointer-events:none">No price data</span>';
   var eb=(c.ebay&&c.tcg)?('<a class="ab ae" href="'+c.ebay+'" target="_blank" onclick="event.stopPropagation()">🟡 eBay</a>'):'';
   var chkb='<button class="ab ac" onclick="toggle(\''+c.id+'\',event)">'+(ic?'Mark as Needed':'Mark as Collected')+'</button>';
-  var det='<div class="det"><div class="dg"><div class="db"><div class="dl">NM Price</div><div class="dv g">'+(c.nm||'—')+'</div></div><div class="db"><div class="dl">Year</div><div class="dv">'+(c.yr||'—')+'</div></div><div class="db"><div class="dl">Rarity</div><div class="dv" style="font-size:10px">'+(c.rar||'—')+'</div></div><div class="db"><div class="dl">Language</div><div class="dv">'+(c.lang==='en'?'🇺🇸 EN':'🇯🇵 JP')+'</div></div></div><div class="dn">'+(c.note||'')+'</div><div class="ag"><a class="ab at" href="'+buy+'" target="_blank" onclick="event.stopPropagation()">'+blbl+'</a>'+pcb+(eb||'')+chkb+'</div></div>';
+  var psaUrl='https://www.psacard.com/pop/trading-card-games/'+encodeURIComponent(c.name)+'/';var det='<div class="det"><div class="dg"><div class="db"><div class="dl">NM Price</div><div class="dv g">'+(c.nm||'—')+'</div></div><div class="db"><div class="dl">Year</div><div class="dv">'+(c.yr||'—')+'</div></div><div class="db"><div class="dl">Rarity</div><div class="dv" style="font-size:10px">'+(c.rar||'—')+'</div></div><div class="db"><div class="dl">Language</div><div class="dv">'+(c.lang==='en'?'🇺🇸 EN':'🇯🇵 JP')+'</div></div><div class="db" style="grid-column:1/-1"><div class="dl">PSA Population</div><div class="dv"><a href="'+psaUrl+'" target="_blank" onclick="event.stopPropagation()" style="color:var(--gd);text-decoration:none;font-size:11px">🔍 View PSA Pop Report →</a></div></div></div><div class="dn">'+(c.note||'')+'</div><div class="ag"><a class="ab at" href="'+buy+'" target="_blank" onclick="event.stopPropagation()">'+blbl+'</a>'+pcb+(eb||'')+chkb+'</div></div>';
   return '<div class="cr'+(ic?' got':'')+(c.sp?' sp':'')+(io?' open':'')+'" id="cr-'+c.id+'" onclick="toggleOpen(\''+c.id+'\')"><div class="ci"><div class="iw">'+ih+fh+'</div><div class="info"><div class="nm">'+c.name+'</div><div class="st">'+c.set+'</div><div class="nu">'+(c.num||'')+(c.rar?' · '+c.rar:'')+'</div><div class="pr">'+(c.nm||'')+'</div><div class="bgs">'+bgs+'</div></div><div class="rt"><div class="ck" onclick="toggle(\''+c.id+'\',event)" style="background:'+(ic?'var(--gn2)':'var(--s2)')+';border-color:'+(ic?'var(--gn)':'var(--bd2)')+'"><span class="cm" style="display:'+(ic?'block':'none')+'">✓</span></div><div class="eh">'+(ic?'Got it':'tap for info')+'</div></div></div>'+det+'</div>';
 }
 function render(){
@@ -510,6 +522,7 @@ function ninjaHours(){var now=new Date();var d=now.getDay();var h=now.getHours()
 function nearMe(){var s=document.getElementById('gps-st');s.style.display='block';s.textContent='Getting location...';if(!navigator.geolocation){s.textContent='Location not supported.';return;}navigator.geolocation.getCurrentPosition(function(p){window.open('https://maps.apple.com/?q=pokemon+card+shop&sll='+p.coords.latitude+','+p.coords.longitude+'&z=12','_blank');s.textContent='Opening nearby shops...';},function(){window.open('https://maps.apple.com/?q=pokemon+card+shop+near+Oceanside+CA','_blank');s.textContent='Using default location.';});}
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 updateStats();render();ninjaHours();
+(function(){var ac=document.getElementById('card-art-con');if(ac)ac.innerHTML='<img class="card-art-float card-art-noctowl" src="https://images.pokemontcg.io/neo4/110.png" alt="">';})();
 </script>
 </body>
 </html>
