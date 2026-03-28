@@ -523,8 +523,8 @@ async function buildSet(){
 }
 function ninjaHours(){var now=new Date();var d=now.getDay();var h=now.getHours();var open=(d===5&&h>=15&&h<21)||(d===6&&h>=10&&h<21)||(d===0&&h>=11&&h<18);var el=document.getElementById('ninja-hrs');if(el)el.innerHTML='<span class="hb '+(open?'ho':'hc')+'">'+(open?'Open Now':'Closed Now')+'</span>';}
 function nearMe(){var s=document.getElementById('gps-st');s.style.display='block';s.textContent='Getting location...';if(!navigator.geolocation){s.textContent='Location not supported.';return;}navigator.geolocation.getCurrentPosition(function(p){window.open('https://maps.apple.com/?q=pokemon+card+shop&sll='+p.coords.latitude+','+p.coords.longitude+'&z=12','_blank');s.textContent='Opening nearby shops...';},function(){window.open('https://maps.apple.com/?q=pokemon+card+shop+near+Oceanside+CA','_blank');s.textContent='Using default location.';});}
-if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
-updateStats();render();ninjaHours();
+if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').then(r=>{r.update();if(r.waiting)r.waiting.postMessage({type:'SKIP_WAITING'});}).catch(()=>{});navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!window._rl){window._rl=true;location.reload();}});}
+(async()=>{if('caches'in window){const ks=await caches.keys();for(const k of ks){if(k!=='pokemon-tracker-v3')await caches.delete(k);}}})();updateStats();render();ninjaHours();
 (function(){var ac=document.getElementById('card-art-con');if(ac)ac.innerHTML='<img class="card-art-float card-art-noctowl" src="https://images.pokemontcg.io/neo4/110.png" alt="">';})();
 </script>
 </body>
