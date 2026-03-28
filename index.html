@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Master Set">
+<meta name="theme-color" content="#080812">
+<link rel="manifest" href="manifest.json">
+<title>Pokemon Master Set Tracker</title>
+<style>
+:root{--bg:#080812;--s1:#0f0f1e;--s2:#16162a;--s3:#1e1e38;--bd:#2a2a50;--bd2:#3a3a68;--tx:#e8e8f8;--tx2:#8888b0;--tx3:#4a4a78;--gd:#f0c040;--pu:#9060e0;--gn:#30d080;--gn2:#1a8050;--rd:#e05050;--bl:#4090f0;--am:#e09030;--tl:#30c0c0;--pk:#e060a0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);overscroll-behavior:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--tx)}
+.nav{position:sticky;top:0;z-index:200;background:rgba(8,8,18,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding-top:env(safe-area-inset-top)}
+.tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:8px 12px 6px;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;min-width:64px}
+.tab .ti{font-size:17px;margin-bottom:2px}
+.tab .tl{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tx3)}
+.tab.on .tl{color:var(--gd)}
+.tab.on{border-bottom-color:var(--gd)}
+.tn.on{border-bottom-color:#9060e0}.tn.on .tl{color:#9060e0}
+.th.on{border-bottom-color:var(--tl)}.th.on .tl{color:var(--tl)}
+.ts.on{border-bottom-color:var(--bl)}.ts.on .tl{color:var(--bl)}
+.tc.on{border-bottom-color:var(--pk)}.tc.on .tl{color:var(--pk)}
+.to.on{border-bottom-color:var(--am)}.to.on .tl{color:var(--am)}
+.tst.on{border-bottom-color:var(--gn)}.tst.on .tl{color:var(--gn)}
+.ta{border-left:1px solid var(--bd)}
+.hdr{background:linear-gradient(135deg,var(--s1),var(--s2));padding:10px 12px 8px;border-bottom:1px solid var(--bd)}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;gap:6px}
+.set-title{font-size:14px;font-weight:800}
+.cn{background:linear-gradient(135deg,#9060e0,#f0c040);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ch{background:linear-gradient(135deg,#30c0c0,#90e0e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cs{background:linear-gradient(135deg,#4090f0,#30d0ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cc{background:linear-gradient(135deg,#e060a0,#f0c040);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cx{background:linear-gradient(135deg,#f0c040,#e060a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pct{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;background:rgba(240,192,64,.1);color:var(--gd);border:1px solid rgba(240,192,64,.2)}
+.delbtn{padding:3px 9px;border-radius:8px;background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.35);color:#e07070;font-size:10px;font-weight:700;cursor:pointer}
+.pills{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;margin-bottom:7px}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;background:var(--s3);border:1px solid var(--bd);border-radius:7px;padding:4px 8px;text-align:center}
+.pv{font-size:12px;font-weight:700;color:var(--gd)}
+.pl{font-size:8px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em}
+.pi{display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-bottom:3px}
+.pt{height:3px;background:var(--s3);border-radius:2px}
+.pf{height:100%;border-radius:2px;transition:width .4s}
+.pfn{background:linear-gradient(90deg,#6040b0,#f0c040)}
+.pfh{background:linear-gradient(90deg,#20a0a0,#90e0e0)}
+.pfs{background:linear-gradient(90deg,#2060c0,#30d0ff)}
+.pfc{background:linear-gradient(90deg,#a04070,#f0c040)}
+.pfx{background:linear-gradient(90deg,#6040b0,#e060a0)}
+.frow{display:flex;background:var(--s1);border-bottom:1px solid var(--bd);overflow-x:auto;scrollbar-width:none}
+.frow::-webkit-scrollbar{display:none}
+.fb{flex-shrink:0;padding:6px 10px;font-size:10px;font-weight:700;color:var(--tx3);border:none;background:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.fb.on{color:var(--gd);border-bottom-color:var(--gd)}
+.sw{padding:6px 10px;background:var(--s1);border-bottom:1px solid var(--bd)}
+.si{width:100%;padding:7px 11px;border-radius:8px;border:1px solid var(--bd2);background:var(--s2);font-size:14px;color:var(--tx);outline:none}
+.si::placeholder{color:var(--tx3)}
+.si:focus{border-color:var(--pu)}
+.cl{padding:5px 8px 120px}
+.sl{padding:10px 4px 4px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--bd)}
+.cr{background:var(--s1);border:1px solid var(--bd);border-radius:11px;margin-bottom:6px;cursor:pointer;overflow:hidden;position:relative}
+.cr:active{transform:scale(.99)}
+.cr.got{background:rgba(48,208,128,.06);border-color:rgba(48,208,128,.25)}
+.cr.sp{border-color:rgba(240,192,64,.3)}
+.cr.sp::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gd),transparent)}
+.ci{display:flex;align-items:center;gap:9px;padding:8px 10px}
+.iw{width:44px;height:62px;flex-shrink:0;border-radius:5px;overflow:hidden;border:1px solid var(--bd2);background:var(--s2);display:flex;align-items:center;justify-content:center}
+.img{width:100%;height:100%;object-fit:cover}
+.ni{font-size:20px;opacity:.4}
+.info{flex:1;min-width:0}
+.nm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cr.got .nm{text-decoration:line-through;color:var(--tx3)}
+.st{font-size:10px;color:var(--tx2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nu{font-size:9px;color:var(--tx3);margin-top:1px}
+.pr{font-size:11px;font-weight:700;color:var(--gn);margin-top:3px}
+.bgs{display:flex;gap:3px;margin-top:3px;flex-wrap:wrap}
+.bg{font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase}
+.br{background:rgba(240,192,64,.15);color:var(--gd);border:1px solid rgba(240,192,64,.3)}
+.bp{background:rgba(144,96,224,.15);color:#b080f0;border:1px solid rgba(144,96,224,.3)}
+.bj{background:rgba(64,144,240,.15);color:#70a0f0;border:1px solid rgba(64,144,240,.3)}
+.be{background:rgba(48,208,128,.12);color:#40c080;border:1px solid rgba(48,208,128,.3)}
+.bc{background:rgba(224,96,160,.15);color:#e080c0;border:1px solid rgba(224,96,160,.3)}
+.rt{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--bd2);background:var(--s2);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.cr.got .ck{background:var(--gn2);border-color:var(--gn)}
+.cm{display:none;color:#fff;font-size:12px;font-weight:800}
+.cr.got .cm{display:block}
+.eh{font-size:9px;color:var(--tx3);text-align:right}
+.cr.got .eh{color:var(--gn2)}
+.det{display:none;padding:0 10px 10px;border-top:1px solid var(--bd)}
+.cr.open .det{display:block}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0}
+.db{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:6px 9px}
+.dl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.dv{font-size:11px;font-weight:700;color:var(--tx);margin-top:2px}
+.dv.g{color:var(--gn)}
+.dn{font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:8px}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.ab{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 6px;border-radius:7px;font-size:11px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:opacity .15s}
+.ab:active{opacity:.7}
+.at{background:rgba(64,144,240,.12);color:var(--bl);border:1px solid rgba(64,144,240,.3)}
+.ap{background:rgba(240,192,64,.1);color:var(--gd);border:1px solid rgba(240,192,64,.3)}
+.ae{background:rgba(224,144,48,.1);color:var(--am);border:1px solid rgba(224,144,48,.3)}
+.ac{background:rgba(48,208,128,.1);color:var(--gn);border:1px solid rgba(48,208,128,.3);width:100%;grid-column:1/-1}
+.bb{position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,18,.97);backdrop-filter:blur(12px);border-top:1px solid var(--bd);padding:7px 8px;padding-bottom:calc(7px + env(safe-area-inset-bottom));display:flex;gap:5px}
+.bn{flex:1;padding:8px 4px;border-radius:8px;border:1px solid var(--bd2);background:var(--s2);font-size:9px;font-weight:700;cursor:pointer;color:var(--tx2)}
+.bn.d{color:var(--rd);border-color:rgba(224,80,80,.3);background:rgba(224,80,80,.07)}
+.pv2{display:none;padding:8px 10px 120px}
+.pv2.on{display:block}
+.pt2{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 7px;display:flex;align-items:center;gap:6px}
+.pt2::after{content:'';flex:1;height:1px;background:var(--bd)}
+.lb{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:11px;text-decoration:none;font-size:13px;font-weight:600;margin-bottom:7px;border:1px solid;transition:opacity .15s}
+.lb:active{opacity:.7}
+.le{background:rgba(224,144,48,.1);color:var(--am);border-color:rgba(224,144,48,.3)}
+.lt{background:rgba(64,144,240,.1);color:var(--bl);border-color:rgba(64,144,240,.3)}
+.lp{background:rgba(240,192,64,.1);color:var(--gd);border-color:rgba(240,192,64,.3)}
+.lg{background:rgba(48,208,128,.08);color:var(--gn);border-color:rgba(48,208,128,.3)}
+.lu{background:rgba(144,96,224,.08);color:#b080f0;border-color:rgba(144,96,224,.3)}
+.ll{background:rgba(48,192,192,.08);color:var(--tl);border-color:rgba(48,192,192,.3)}
+.la{margin-left:auto;opacity:.4;font-size:16px}
+.sc{background:var(--s1);border:1px solid var(--bd);border-radius:11px;padding:12px 14px;margin-bottom:8px}
+.sn{font-size:14px;font-weight:800;color:var(--tx);margin-bottom:3px}
+.sg{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;background:rgba(48,208,128,.12);color:var(--gn);border:1px solid rgba(48,208,128,.25);margin-bottom:6px}
+.sd{font-size:11px;color:var(--tx2);line-height:1.7}
+.sa{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.sb{padding:6px 11px;border-radius:7px;font-size:11px;font-weight:600;text-decoration:none;border:1px solid}
+.sm{background:rgba(64,144,240,.1);color:var(--bl);border-color:rgba(64,144,240,.3)}
+.sy{background:rgba(224,80,80,.1);color:#e07070;border-color:rgba(224,80,80,.3)}
+.sw2{background:rgba(144,96,224,.1);color:#b080f0;border-color:rgba(144,96,224,.3)}
+.sp2{background:rgba(48,208,128,.1);color:var(--gn);border-color:rgba(48,208,128,.3)}
+.hb{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:5px}
+.ho{background:rgba(48,208,128,.15);color:var(--gn);border:1px solid rgba(48,208,128,.3)}
+.hc{background:rgba(224,80,80,.15);color:#e07070;border:1px solid rgba(224,80,80,.3)}
+.gb{width:100%;padding:12px;border-radius:11px;border:1px solid rgba(48,208,128,.3);background:rgba(48,208,128,.08);color:var(--gn);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px}
+.mo{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center}
+.mo.on{display:flex}
+.ms{background:#13131f;border:1px solid var(--bd2);border-radius:20px 20px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom)}
+.mh{background:linear-gradient(135deg,#1e1e38,#16162a);padding:16px 18px 14px;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:1}
+.mt{font-size:16px;font-weight:800;background:linear-gradient(135deg,#f0c040,#e060a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.mx{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--tx3);font-size:22px;cursor:pointer}
+.mb{padding:16px 18px}
+.ml{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+.mi{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--bd2);background:var(--s2);font-size:15px;color:var(--tx);outline:none;margin-bottom:6px}
+.mi:focus{border-color:var(--pu)}
+.mhi{font-size:11px;color:var(--tx3);margin-bottom:14px}
+.mk{width:100%;padding:14px;border-radius:11px;border:none;background:linear-gradient(135deg,#6040b0,#f0c040);color:white;font-size:14px;font-weight:700;cursor:pointer}
+.mk:disabled{opacity:.5;cursor:not-allowed}
+.mst{font-size:12px;color:var(--tx2);margin-top:10px;text-align:center;min-height:18px;line-height:1.5}
+.md{height:1px;background:var(--bd);margin:14px 0}
+.ci2{display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:10px 12px;margin-bottom:7px}
+.cn2{font-size:13px;font-weight:600;color:var(--tx)}
+.cc2{font-size:10px;color:var(--tx3);margin-top:2px}
+.cbs{display:flex;gap:6px}
+.cbtn{padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid}
+.co{background:rgba(144,96,224,.1);color:#b080f0;border-color:rgba(144,96,224,.3)}
+.cd{background:rgba(224,80,80,.1);color:#e07070;border-color:rgba(224,80,80,.3)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(240,192,64,.3);border-top-color:var(--gd);border-radius:50%;animation:sp .8s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="tabs" id="tabs">
+    <button class="tab tn on" id="tab-noctowl" onclick="switchSet('noctowl',this)"><span class="ti">🦉</span><span class="tl">Noctowl</span></button>
+    <button class="tab th" id="tab-hoothoot" onclick="switchSet('hoothoot',this)"><span class="ti">🐦</span><span class="tl">Hoothoot</span></button>
+    <button class="tab ts" id="tab-surfing" onclick="switchSet('surfing',this)"><span class="ti">🏄</span><span class="tl">Surfing</span></button>
+    <button class="tab tc" id="tab-cameo" onclick="switchSet('cameo',this)"><span class="ti">🎭</span><span class="tl">Cameos</span></button>
+    <button class="tab to" id="tab-orders" onclick="switchPage('orders',this)"><span class="ti">📦</span><span class="tl">Orders</span></button>
+    <button class="tab tst" id="tab-stores" onclick="switchPage('stores',this)"><span class="ti">🗺️</span><span class="tl">Stores</span></button>
+    <button class="tab ta" onclick="openModal()"><span class="ti" style="font-size:20px;background:linear-gradient(135deg,#f0c040,#e060a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent">+</span><span class="tl" style="color:var(--gd)">Add Set</span></button>
+  </div>
+</nav>
+<div id="tracker">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div class="set-title cn" id="stitle">🦉 Noctowl Master Set</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button class="delbtn" id="delbtn" onclick="delSet()">🗑 Remove</button>
+        <div class="pct" id="pct">0%</div>
+      </div>
+    </div>
+    <div class="pills">
+      <div class="pill"><div class="pv" id="p-got">0</div><div class="pl">Have</div></div>
+      <div class="pill"><div class="pv" id="p-need">0</div><div class="pl">Need</div></div>
+      <div class="pill"><div class="pv" id="p-tot">0</div><div class="pl">Total</div></div>
+      <div class="pill"><div class="pv" id="p-rare">0</div><div class="pl">Rare/Promo</div></div>
+    </div>
+    <div class="pi"><span id="ptxt">0 of 0</span><span id="pmsg">Start hunting! 🎯</span></div>
+    <div class="pt"><div class="pf pfn" id="pfill" style="width:0%"></div></div>
+  </div>
+  <div class="frow">
+    <button class="fb on" onclick="filt('all',this)">All</button>
+    <button class="fb" onclick="filt('en',this)">🇺🇸 EN</button>
+    <button class="fb" onclick="filt('jp',this)">🇯🇵 JP</button>
+    <button class="fb" onclick="filt('needed',this)">Needed</button>
+    <button class="fb" onclick="filt('collected',this)">Collected</button>
+    <button class="fb" onclick="filt('rare',this)">⭐ Rare</button>
+    <button class="fb" onclick="filt('promo',this)">Promos</button>
+  </div>
+  <div class="sw"><input class="si" id="si" type="search" placeholder="Search cards..." oninput="search(this.value)" autocomplete="off" autocorrect="off" spellcheck="false"></div>
+</div>
+<div class="cl" id="cl"></div>
+<div class="bb" id="bb">
+  <button class="bn" onclick="checkAll(true)">✓ Check All</button>
+  <button class="bn" onclick="checkAll(false)">○ Uncheck</button>
+  <button class="bn d" onclick="resetSet()">↺ Reset</button>
+</div>
+<div class="pv2" id="pg-orders">
+  <div class="pt2" style="margin-top:10px">Your Accounts</div>
+  <a class="lb le" href="https://www.ebay.com/mye/myebay/purchase" target="_blank"><span style="font-size:18px">🛒</span><div><div>eBay — My Purchases</div><div style="font-size:10px;opacity:.6;margin-top:1px">View all recent orders</div></div><span class="la">›</span></a>
+  <a class="lb le" href="https://www.ebay.com/mye/myebay/watchlist" target="_blank"><span style="font-size:18px">👁️</span><div><div>eBay — Watch List</div><div style="font-size:10px;opacity:.6;margin-top:1px">Items you are watching</div></div><span class="la">›</span></a>
+  <a class="lb le" href="https://www.ebay.com/mye/myebay/bids" target="_blank"><span style="font-size:18px">🔨</span><div><div>eBay — Active Bids</div><div style="font-size:10px;opacity:.6;margin-top:1px">Auctions you are bidding on</div></div><span class="la">›</span></a>
+  <a class="lb lt" href="https://www.tcgplayer.com/myaccount/orders" target="_blank"><span style="font-size:18px">🃏</span><div><div>TCGPlayer — My Orders</div><div style="font-size:10px;opacity:.6;margin-top:1px">Track your TCG orders</div></div><span class="la">›</span></a>
+  <a class="lb lp" href="https://www.pricecharting.com/collection" target="_blank"><span style="font-size:18px">📊</span><div><div>PriceCharting — Collection</div><div style="font-size:10px;opacity:.6;margin-top:1px">Track collection value</div></div><span class="la">›</span></a>
+  <div class="pt2">Quick Search</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+    <a style="background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px;text-decoration:none;display:block" href="https://www.ebay.com/sch/i.html?_nkw=shining+noctowl+pokemon&_sop=12" target="_blank"><div style="font-size:12px;font-weight:700;color:var(--tx)">Shining Noctowl</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">eBay · Recent</div></a>
+    <a style="background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px;text-decoration:none;display:block" href="https://www.ebay.com/sch/i.html?_nkw=hoothoot+TG12+astral+radiance&_sop=12" target="_blank"><div style="font-size:12px;font-weight:700;color:var(--tx)">Hoothoot TG12</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">eBay · Recent</div></a>
+    <a style="background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px;text-decoration:none;display:block" href="https://www.ebay.com/sch/i.html?_nkw=surfing+pikachu+rising+rivals&_sop=12" target="_blank"><div style="font-size:12px;font-weight:700;color:var(--tx)">Surfing Pikachu</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">eBay · Recent</div></a>
+    <a style="background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px;text-decoration:none;display:block" href="https://www.tcgplayer.com/search/pokemon/product?q=noctowl&sort=price-asc" target="_blank"><div style="font-size:12px;font-weight:700;color:var(--tx)">Noctowl Singles</div><div style="font-size:10px;color:var(--tx3);margin-top:2px">TCGPlayer · Cheapest</div></a>
+  </div>
+  <div class="pt2">Price Tools</div>
+  <a class="lb lu" href="https://www.psacard.com/auctionprices" target="_blank"><span style="font-size:18px">🏆</span><div><div>PSA Auction Prices</div><div style="font-size:10px;opacity:.6;margin-top:1px">Graded card history</div></div><span class="la">›</span></a>
+  <a class="lb ll" href="https://www.pricecharting.com/category/pokemon-cards" target="_blank"><span style="font-size:18px">📈</span><div><div>PriceCharting</div><div style="font-size:10px;opacity:.6;margin-top:1px">Market price history</div></div><span class="la">›</span></a>
+</div>
+<div class="pv2" id="pg-stores">
+  <button class="gb" style="margin-top:10px" onclick="nearMe()"><span>📍</span> Find Card Shops Near Me</button>
+  <div id="gps-st" style="font-size:11px;color:var(--tx3);text-align:center;margin-bottom:10px;display:none"></div>
+  <div class="pt2">⭐ Your Spot — NinjaXchange</div>
+  <div class="sc" style="border-color:rgba(240,192,64,.4)">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div><div class="sn">NinjaXchange Collectible Expo</div><span class="sg">Pokemon · Comics · Collectibles</span></div>
+      <div id="ninja-hrs"></div>
+    </div>
+    <div class="sd">📍 2561 El Camino Real, Carlsbad, CA 92008<br>📞 (760) 880-8016<br>🕐 Fri 3–9pm · Sat 10am–9pm · Sun 11am–6pm · Mon–Thu Closed</div>
+    <div class="sa">
+      <a class="sb sm" href="https://maps.apple.com/?q=NinjaXchange+Collectible+Expo&address=2561+El+Camino+Real+Carlsbad+CA" target="_blank">🗺️ Maps</a>
+      <a class="sb sy" href="https://www.yelp.com/biz/ninjaxchange-collectible-expo-carlsbad" target="_blank">⭐ Yelp</a>
+      <a class="sb sw2" href="https://www.ninjaxchange.net" target="_blank">🌐 Web</a>
+      <a class="sb sp2" href="tel:7608808016">📞 Call</a>
+    </div>
+  </div>
+  <div class="pt2">North County San Diego</div>
+  <div class="sc"><div class="sn">Kingslayer Games</div><span class="sg">Pokemon · MTG · Yu-Gi-Oh</span><div class="sd">📍 Oceanside, CA</div><div class="sa"><a class="sb sm" href="https://maps.apple.com/?q=Kingslayer+Games+Oceanside+CA" target="_blank">🗺️ Maps</a><a class="sb sy" href="https://www.yelp.com/search?find_desc=Kingslayer+Games&find_loc=Oceanside,+CA" target="_blank">⭐ Yelp</a></div></div>
+  <div class="sc"><div class="sn">Coastal Sports Cards</div><span class="sg">Sports Cards · Pokemon · Graded</span><div class="sd">📍 Oceanside, CA</div><div class="sa"><a class="sb sm" href="https://maps.apple.com/?q=Coastal+Sports+Cards+Oceanside+CA" target="_blank">🗺️ Maps</a><a class="sb sy" href="https://www.yelp.com/search?find_desc=Coastal+Sports+Cards&find_loc=Oceanside,+CA" target="_blank">⭐ Yelp</a></div></div>
+  <div class="sc"><div class="sn">KCM Collectibles</div><span class="sg">Pokemon · Singles · Sealed</span><div class="sd">📍 Oceanside, CA</div><div class="sa"><a class="sb sm" href="https://maps.apple.com/?q=KCM+Collectibles+Oceanside+CA" target="_blank">🗺️ Maps</a><a class="sb sy" href="https://www.yelp.com/search?find_desc=KCM+Collectibles&find_loc=Oceanside,+CA" target="_blank">⭐ Yelp</a></div></div>
+  <div class="sc"><div class="sn">Pair A Dice Games</div><span class="sg">Pokemon · MTG · Events</span><div class="sd">📍 Oceanside, CA</div><div class="sa"><a class="sb sm" href="https://maps.apple.com/?q=Pair+A+Dice+Games+Oceanside+CA" target="_blank">🗺️ Maps</a><a class="sb sy" href="https://www.yelp.com/search?find_desc=Pair+A+Dice+Games&find_loc=Oceanside,+CA" target="_blank">⭐ Yelp</a></div></div>
+  <div class="pt2">Buy Online</div>
+  <a class="lb lt" href="https://www.tcgplayer.com" target="_blank"><span style="font-size:18px">🃏</span><div><div>TCGPlayer</div><div style="font-size:10px;opacity:.6;margin-top:1px">Largest online marketplace</div></div><span class="la">›</span></a>
+  <a class="lb le" href="https://www.ebay.com/b/Pokemon-TCG/2536/bn_7117627627" target="_blank"><span style="font-size:18px">🛒</span><div><div>eBay — Pokemon TCG</div><div style="font-size:10px;opacity:.6;margin-top:1px">Auctions and Buy It Now</div></div><span class="la">›</span></a>
+  <a class="lb ll" href="https://www.dacardworld.com" target="_blank"><span style="font-size:18px">🌐</span><div><div>DA Card World</div><div style="font-size:10px;opacity:.6;margin-top:1px">Sealed product specialist</div></div><span class="la">›</span></a>
+</div>
+<div class="mo" id="modal">
+  <div class="ms">
+    <div class="mh">
+      <div class="mt">✨ Add a Master Set</div>
+      <div style="font-size:11px;color:var(--tx2);margin-top:4px;line-height:1.5">AI researches every card ever printed for any Pokemon and adds it as a new tab.</div>
+      <button class="mx" onclick="closeModal()">✕</button>
+    </div>
+    <div class="mb">
+      <div class="ml">Pokemon Name</div>
+      <input class="mi" id="ai-in" type="text" placeholder="e.g. Mewtwo, Umbreon, Charizard..." onkeydown="if(event.key==='Enter')buildSet()">
+      <div class="mhi">Try: Gengar · Eevee · Mewtwo · Lugia · Umbreon · Morty</div>
+      <button class="mk" id="ai-btn" onclick="buildSet()">🔍 Research and Build Set</button>
+      <div class="mst" id="ai-st"></div>
+      <div class="md"></div>
+      <div class="ml">Your Custom Sets</div>
+      <div id="clist"><div style="font-size:12px;color:var(--tx3);text-align:center;padding:8px">No custom sets yet</div></div>
+    </div>
+  </div>
+</div>
+<script>
+var L='https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/tpci/';
+var T='https://images.pokemontcg.io/';
+var NOCTOWL=[
+{id:'n0',name:'Noctowl',set:'Neo Genesis',num:'42/111',yr:2000,lang:'en',rar:'Uncommon',sp:false,pr:false,img:T+'neo1/42.png',tcg:'https://www.tcgplayer.com/search/pokemon/neo-genesis?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-neo-genesis/noctowl-42',nm:'$1.50',note:"Noctowl TCG debut. 1st Edition copies are worth a premium."},
+{id:'n1',name:'Shining Noctowl',set:'Neo Destiny',num:'110/105',yr:2002,lang:'en',rar:'Shining Holo Secret Rare',sp:true,pr:false,img:T+'neo4/110.png',tcg:'https://www.tcgplayer.com/search/pokemon/neo-destiny?q=shining+noctowl',pc:'https://www.pricecharting.com/game/pokemon-neo-destiny/shining-noctowl-110',nm:'$288-$631',note:'The crown jewel. Unlimited: 3,254 graded, 275 PSA 10. Numbered above set total.'},
+{id:'n2',name:'Shining Noctowl 1st Ed.',set:'Neo Destiny',num:'110/105',yr:2002,lang:'en',rar:'Shining Holo 1st Edition',sp:true,pr:false,img:T+'neo4/110.png',tcg:'https://www.tcgplayer.com/search/pokemon/neo-destiny?q=shining+noctowl',pc:'https://www.pricecharting.com/game/pokemon-neo-destiny/shining-noctowl-1st-edition-110',nm:'$500-$700+',note:'877 graded, only 176 PSA 10. PSA 10 sold for $2,671. The ultimate Noctowl grail.'},
+{id:'n3',name:'Noctowl',set:'Skyridge',num:'40/144',yr:2003,lang:'en',rar:'Uncommon',sp:false,pr:false,img:T+'ecard3/40.png',tcg:'https://www.tcgplayer.com/search/pokemon/skyridge?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-skyridge/noctowl-40',nm:'$10-$15',note:'Final WotC era set. One of the rarest English sets ever printed.'},
+{id:'n4',name:'Noctowl',set:'EX Unseen Forces',num:'43/115',yr:2005,lang:'en',rar:'Uncommon',sp:false,pr:false,img:T+'ex10/43.png',tcg:'https://www.tcgplayer.com/search/pokemon/ex-unseen-forces?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-ex-unseen-forces/noctowl-43',nm:'$1.50',note:'EX era. Reverse holo harder to find gem mint.'},
+{id:'n5',name:'Noctowl',set:'Diamond and Pearl',num:'34/130',yr:2007,lang:'en',rar:'Uncommon',sp:false,pr:false,img:T+'dp1/34.png',tcg:'https://www.tcgplayer.com/search/pokemon/diamond-and-pearl?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-diamond-pearl/noctowl-34',nm:'$1.00',note:'DP base set. Reverse holo variant also available.'},
+{id:'n6',name:'Noctowl',set:'HeartGold and SoulSilver',num:'8/123',yr:2010,lang:'en',rar:'Rare Holo',sp:false,pr:false,img:L+'HS/HS_008_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/heartgold-soulsilver?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-heartgold-soulsilver/noctowl-8',nm:'$3.00',note:'Only standard Rare Holo in English. Non-holo theme deck variant also exists.'},
+{id:'n7',name:'Noctowl Non-Holo',set:'HeartGold and SoulSilver',num:'8/123',yr:2010,lang:'en',rar:'Non-Holo Rare',sp:false,pr:false,img:L+'HS/HS_008_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/heartgold-soulsilver?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-heartgold-soulsilver/noctowl-8',nm:'$3-$6',note:'Non-holographic variant from the Hoothoot theme deck.'},
+{id:'n8',name:'Noctowl',set:'HGSS Black Star Promos',num:'HGSS06',yr:2010,lang:'en',rar:'Promo Holo',sp:false,pr:true,img:L+'HSP/HSP_006_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/hgss-promos?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-hgss-promos/noctowl-hgss06',nm:'$6-$8',note:'Pokemon League promo. Often has handling damage.'},
+{id:'n9',name:'Noctowl',set:'Plasma Freeze',num:'92/116',yr:2013,lang:'en',rar:'Uncommon',sp:false,pr:false,img:L+'PLF/PLF_092_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/plasma-freeze?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-plasma-freeze/noctowl-92',nm:'$0.50',note:'Black and White era standard uncommon.'},
+{id:'n10',name:'Noctowl BREAK',set:'XY Black Star Promos',num:'XY136',yr:2016,lang:'en',rar:'BREAK Promo Holo',sp:true,pr:true,img:L+'XYP/XYP_136_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/xy-promos?q=noctowl+break',pc:'https://www.pricecharting.com/game/pokemon-xy-black-star-promos/noctowl-break-xy136',nm:'$8-$10',note:'Unique horizontal gold-foil BREAK card. XY era exclusive mechanic.'},
+{id:'n11',name:'Noctowl',set:'BREAKthrough',num:'120/162',yr:2015,lang:'en',rar:'Uncommon',sp:false,pr:false,img:L+'BKT/BKT_120_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/xy-breakthrough?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-xy-breakthrough/noctowl-120',nm:'$0.50',note:'Pairs with the BREAK promo above.'},
+{id:'n12',name:'Noctowl',set:'Burning Shadows',num:'107/147',yr:2017,lang:'en',rar:'Uncommon',sp:false,pr:false,img:L+'BUS/BUS_107_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/burning-shadows?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-burning-shadows/noctowl-107',nm:'$0.50',note:'Sun and Moon era.'},
+{id:'n13',name:'Noctowl',set:'Unified Minds',num:'166/236',yr:2019,lang:'en',rar:'Common',sp:false,pr:false,img:L+'UNM/UNM_166_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/unified-minds?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-unified-minds/noctowl-166',nm:'$0.25',note:'Common — still needed for the master set!'},
+{id:'n14',name:'Noctowl',set:'Sword and Shield',num:'144/202',yr:2020,lang:'en',rar:'Uncommon',sp:false,pr:false,img:L+'SSH/SSH_144_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/sword-and-shield?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-sword-shield/noctowl-144',nm:'$0.50',note:'SWSH base set. Master Ball reverse holo exists.'},
+{id:'n15',name:'Noctowl',set:'SWSH Black Star Promos',num:'SWSH027',yr:2020,lang:'en',rar:'Promo Holo',sp:false,pr:true,img:L+'SP/SP_027_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/swsh-promos?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-swsh-promos/noctowl-swsh027',nm:'$1.50-$2',note:'Sword and Shield era event promo.'},
+{id:'n16',name:'Noctowl',set:'Astral Radiance',num:'121/189',yr:2022,lang:'en',rar:'Uncommon',sp:false,pr:false,img:L+'ASR/ASR_121_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/astral-radiance?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-astral-radiance/noctowl-121',nm:'$0.50',note:'SWSH Astral Radiance.'},
+{id:'n17',name:'Noctowl',set:'Temporal Forces',num:'127/162',yr:2024,lang:'en',rar:'Uncommon',sp:false,pr:false,img:L+'TEF/TEF_127_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/temporal-forces?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-temporal-forces/noctowl-127',nm:'$0.50',note:'SV Temporal Forces. Master Ball reverse holo exists.'},
+{id:'n18',name:'Noctowl',set:'Stellar Crown',num:'115/142',yr:2024,lang:'en',rar:'Rare',sp:false,pr:false,img:L+'SCR/SCR_115_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/stellar-crown?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-stellar-crown/noctowl-115',nm:'$0.75',note:'Tera Pokemon with Jewel Seeker ability. Sees competitive play.'},
+{id:'n19',name:'Noctowl',set:'SVP Black Star Promos',num:'SVP141',yr:2024,lang:'en',rar:'Promo',sp:false,pr:true,img:L+'SVP/SVP_141_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/scarlet-violet-promos?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-promo/noctowl-141',nm:'$3-$4',note:'Standard SVP promo. Pokemon Center holofoil version is rarer.'},
+{id:'n20',name:'Noctowl PC Exclusive',set:'SVP Black Star Promos',num:'SVP141',yr:2024,lang:'en',rar:'Promo Holo PC Exclusive',sp:true,pr:true,img:L+'SVP/SVP_141_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/scarlet-violet-promos?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-promo/noctowl-pokemon-center-141',nm:'$28-$35',note:'Pokemon Center holofoil stamp variant. Worth $28+ vs $3 for standard.'},
+{id:'n21',name:'Noctowl',set:'Prismatic Evolutions',num:'078/131',yr:2025,lang:'en',rar:'Rare',sp:false,pr:false,img:L+'PRE/PRE_078_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/prismatic-evolutions?q=noctowl',pc:'https://www.pricecharting.com/game/pokemon-prismatic-evolutions/noctowl-78',nm:'$1-$3',note:'Most recent English Noctowl.'},
+{id:'n22',name:'Noctowl',set:'Gold Silver to a New World',num:'—',yr:2000,lang:'jp',rar:'Uncommon',sp:false,pr:false,img:T+'neo1/42.png',ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+gold+silver+new+world+japanese',pc:'https://www.pricecharting.com/game/pokemon-japanese-gold-silver-new-world/noctowl',nm:'$2-$5',note:'First Japanese Noctowl. 1st edition copies command a premium.'},
+{id:'n23',name:"Morty's Noctowl",set:'Pokemon VS',num:'024/141',yr:2001,lang:'jp',rar:'Common',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=morty+noctowl+pokemon+vs+japanese',pc:'https://www.pricecharting.com/game/pokemon-japanese-vs/mortys-noctowl-24',nm:'$5-$15',note:'Japan-exclusive. Never released in English. Features Morty the Gym Leader.'},
+{id:'n24',name:'Noctowl',set:'Mysterious Mountains',num:'064/088',yr:2002,lang:'jp',rar:'Uncommon',sp:false,pr:false,img:T+'ecard3/40.png',ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+mysterious+mountains+japanese',pc:'https://www.pricecharting.com/game/pokemon-japanese-mysterious-mountains/noctowl-64',nm:'$3-$8',note:'Japanese Skyridge equivalent.'},
+{id:'n25',name:'Noctowl',set:'Space-Time Creation',num:'—',yr:2006,lang:'jp',rar:'Uncommon',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+space+time+creation+japanese',pc:null,nm:'$2-$4',note:'Japanese Diamond and Pearl equivalent.'},
+{id:'n26',name:'Noctowl',set:'HeartGold Collection',num:'059/070',yr:2010,lang:'jp',rar:'Rare Holo',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+059+heartgold+collection+japanese',pc:'https://www.pricecharting.com/game/pokemon-japanese-heartgold-collection/noctowl-59',nm:'$4-$8',note:'Japanese HGSS Rare Holo.'},
+{id:'n27',name:'Noctowl',set:'L-P Promos',num:'026/L-P',yr:2010,lang:'jp',rar:'Promo Holo',sp:false,pr:true,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+026+lp+promo+japanese',pc:null,nm:'$10-$20',note:'Japanese event promo. Very hard to find outside Japan.'},
+{id:'n28',name:'Noctowl',set:'Spiral Force',num:'044/051',yr:2013,lang:'jp',rar:'Uncommon',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+spiral+force+japanese',pc:null,nm:'$1.50-$3',note:'Japanese Plasma Freeze equivalent.'},
+{id:'n29',name:'Noctowl',set:'Sky Legend',num:'039/054',yr:2019,lang:'jp',rar:'Common',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+sky+legend+japanese',pc:null,nm:'$1-$2',note:'Japanese Unified Minds equivalent.'},
+{id:'n30',name:'Noctowl',set:'Shield',num:'048/060',yr:2020,lang:'jp',rar:'Uncommon',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+048+shield+japanese',pc:null,nm:'$1-$2',note:'Japanese Sword and Shield base set.'},
+{id:'n31',name:'Noctowl',set:'S-P Promos',num:'026/S-P',yr:2020,lang:'jp',rar:'Promo',sp:false,pr:true,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+026+sp+promo+japanese',pc:null,nm:'$8-$15',note:'Japanese Pokemon Card Gym event promo.'},
+{id:'n32',name:'Noctowl',set:'Battle Region',num:'056/067',yr:2022,lang:'jp',rar:'Uncommon',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+battle+region+japanese',pc:null,nm:'$1-$2',note:'Japanese Astral Radiance equivalent.'},
+{id:'n33',name:'Noctowl Full Art IR',set:'Stellar Miracle',num:'114/102',yr:2024,lang:'jp',rar:'Illustration Rare',sp:true,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+114+stellar+miracle+illustration+rare',pc:'https://www.pricecharting.com/game/pokemon-japanese-stellar-miracle/noctowl-114',nm:'$15-$25',note:'Japan-exclusive Illustration Rare by Tetsu Kayama. PSA 10 selling for $21-$42.'},
+{id:'n34',name:'Noctowl',set:'Stellar Miracle',num:'077/102',yr:2024,lang:'jp',rar:'Rare',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+077+stellar+miracle+japanese',pc:null,nm:'$0.50-$1',note:'Standard Rare from Japanese Stellar Miracle. Artwork by matazo.'},
+{id:'n35',name:'Noctowl',set:'SV-P Promos',num:'173/SV-P',yr:2024,lang:'jp',rar:'Promo Mirror Holo',sp:false,pr:true,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+173+SVP+promo+japanese',pc:null,nm:'$5-$10',note:'Gym First Entry Campaign promo (July-Sept 2024).'},
+{id:'n36',name:'Noctowl',set:'To Have Seen the Battle Rainbow',num:'044/051',yr:2017,lang:'jp',rar:'Uncommon',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+battle+rainbow+japanese',pc:null,nm:'$1-$3',note:'Japanese Burning Shadows equivalent.'},
+{id:'n37',name:'Noctowl',set:'Blue Shock',num:'050/059',yr:2015,lang:'jp',rar:'Uncommon',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+blue+shock+japanese',pc:null,nm:'$1-$2',note:'Japanese BREAKthrough equivalent.'},
+{id:'n38',name:'Noctowl',set:'Wild Force',num:'055/071',yr:2024,lang:'jp',rar:'Common',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+wild+force+japanese',pc:null,nm:'$0.50-$1',note:'Japanese Temporal Forces equivalent.'},
+{id:'n39',name:'Noctowl',set:'Terastal Fest ex',num:'128/187',yr:2025,lang:'jp',rar:'Common',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+terastal+fest+japanese',pc:null,nm:'$0.50-$1',note:'Japanese Prismatic Evolutions equivalent.'},
+{id:'n40',name:'Noctowl',set:'Stellar Tera Starter Set',num:'010/022',yr:2024,lang:'jp',rar:'Deck Card',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+stellar+tera+starter+japanese',pc:null,nm:'$1-$3',note:'Ceruledge ex starter deck exclusive.'},
+{id:'n41',name:'Noctowl',set:'Battle Partners Deck Build Box',num:'008/045',yr:2025,lang:'jp',rar:'Deck Card',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+battle+partners+deck+japanese',pc:null,nm:'$1-$3',note:'Battle Partners Deck Build Box exclusive.'},
+{id:'n42',name:'Noctowl',set:'Premium Trainer Box MEGA',num:'009/043',yr:2025,lang:'jp',rar:'Deck Card',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+premium+trainer+box+mega+japanese',pc:null,nm:'$1-$3',note:'Premium Trainer Box MEGA exclusive.'},
+{id:'n43',name:'Noctowl',set:'MEGA Dream ex',num:'138/193',yr:2025,lang:'jp',rar:'Common',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+mega+dream+ex+japanese',pc:null,nm:'$0.50-$1',note:'Japanese Ascended Heroes equivalent.'},
+{id:'n44',name:'Noctowl',set:'Start Deck 100 Battle Collection',num:'573/742',yr:2025,lang:'jp',rar:'Deck Card',sp:false,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=noctowl+start+deck+100+japanese',pc:null,nm:'$0.50-$1',note:'Part of the 742-card Start Deck 100 Battle Collection.'},
+];
+var SURFING=[
+{id:'s0',name:'Surfing Pikachu',set:'Wizards Black Star Promos',num:'28',yr:2001,lang:'en',rar:'Promo Holo',sp:false,pr:true,img:T+'basep/28.png',tcg:'https://www.tcgplayer.com/search/pokemon/wizards-black-star-promos?q=surfing+pikachu',pc:'https://www.pricecharting.com/game/pokemon-wizards-black-star-promos/surfing-pikachu-28',nm:'$15-$40',note:'First English Surfing Pikachu. Distributed at Pokemon League August 2001.'},
+{id:'s1',name:'Surfing Pikachu',set:'Platinum Rising Rivals',num:'114/111',yr:2009,lang:'en',rar:'Secret Rare Holo',sp:true,pr:false,img:L+'PL2/PL2_114_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/rising-rivals?q=surfing+pikachu',pc:'https://www.pricecharting.com/game/pokemon-platinum-rising-rivals/surfing-pikachu-114',nm:'$60-$120',note:'Secret Rare numbered above set total. PSA 10: ~$2,500. Biggest chase of the Platinum era.'},
+{id:'s2',name:'Surfing Pikachu',set:'XY Evolutions',num:'111/108',yr:2016,lang:'en',rar:'Secret Rare Holo',sp:true,pr:false,img:L+'EVO/EVO_111_R_EN_SM.png',tcg:'https://www.tcgplayer.com/product/124124/pokemon-xy-evolutions-surfing-pikachu',pc:'https://www.pricecharting.com/game/pokemon-xy-evolutions/surfing-pikachu-111',nm:'$5-$8',note:'Secret Rare from beloved Evolutions set. Same classic artwork. PSA 10: ~$60.'},
+{id:'s3',name:'Surfing Pikachu V',set:'Celebrations',num:'8/025',yr:2021,lang:'en',rar:'Full Art Ultra Rare V',sp:true,pr:false,img:L+'CEL/CEL_008_R_EN_SM.png',tcg:'https://www.tcgplayer.com/product/257070/pokemon-swsh-celebrations-surfing-pikachu-v',pc:'https://www.pricecharting.com/game/pokemon-celebrations/surfing-pikachu-v-8',nm:'$3-$6',note:'25th Anniversary Celebrations Full Art V card.'},
+{id:'s4',name:'Surfing Pikachu VMAX',set:'Celebrations',num:'9/025',yr:2021,lang:'en',rar:'VMAX Ultra Rare',sp:true,pr:false,img:L+'CEL/CEL_009_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/celebrations?q=surfing+pikachu+vmax',pc:'https://www.pricecharting.com/game/pokemon-celebrations/surfing-pikachu-vmax-9',nm:'$4-$8',note:'25th Anniversary VMAX. 310 HP. Artwork by aky CG Works.'},
+{id:'s5',name:'Surfing Pikachu Classic Reprint',set:'Celebrations Classic Collection',num:'28',yr:2021,lang:'en',rar:'Classic Promo Reprint',sp:true,pr:false,img:T+'basep/28.png',tcg:'https://www.tcgplayer.com/search/pokemon/celebrations-classic?q=surfing+pikachu',pc:'https://www.pricecharting.com/game/pokemon-celebrations/surfing-pikachu-9',nm:'$1.50-$3',note:'Classic Collection reprint inside Celebrations products. Original card frame style.'},
+{id:'s6',name:'Surfing Pikachu CoroCoro Promo',set:'Japanese CoroCoro Comic',num:'unnumbered',yr:1997,lang:'jp',rar:'Promo Glossy',sp:true,pr:true,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=surfing+pikachu+corocoro+1997+japanese',pc:null,nm:'$30-$80',note:'First ever Surfing Pikachu. September 1997 CoroCoro Comic. Glossy card stock.'},
+{id:'s7',name:'Surfing Pikachu Mt. Fuji',set:'JR East Stamp Rally',num:'unnumbered',yr:1997,lang:'jp',rar:'Stamp Rally Exclusive',sp:true,pr:true,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=surfing+pikachu+mt+fuji+1997+japanese+stamp+rally',pc:'https://www.pricecharting.com/game/pokemon-japanese-promo/surfing-pikachu-mt-fuji-25',nm:'$200-$500+',note:'THE grail. JR East Yamanote Line Stamp Rally Aug 1997. 30 stamps required. Mt. Fuji art. PSA 10: $6,564.'},
+{id:'s8',name:'Surfing Pikachu',set:'Pokemon Card Web',num:'025/048',yr:2001,lang:'jp',rar:'Web Set Exclusive',sp:true,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=surfing+pikachu+025+048+pokemon+card+web',pc:'https://www.pricecharting.com/game/pokemon-japanese-pokemon-card-web/surfing-pikachu-25',nm:'$15-$40',note:'Japanese Pokemon Card Web exclusive online set.'},
+{id:'s9',name:'Surfing Pikachu 1st Ed.',set:'Bonds to the End of Time',num:'89/090',yr:2008,lang:'jp',rar:'Secret Rare 1st Edition',sp:true,pr:false,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=surfing+pikachu+bonds+end+of+time+japanese',pc:'https://www.pricecharting.com/game/pokemon-japanese-bonds-to-the-end-of-time/surfing-pikachu-89',nm:'$40-$100',note:'Japanese Rising Rivals equivalent. 1st Edition holo.'},
+{id:'s10',name:'Surfing Pikachu 20th Anniversary',set:'20th Anniversary Special Pack',num:'unnumbered',yr:2016,lang:'jp',rar:'20th Anniversary Promo',sp:true,pr:true,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=surfing+pikachu+20th+anniversary+2016+japanese',pc:null,nm:'$25-$60',note:'20th Anniversary Special Pack: M Slowbro-EX. Re-imagined vintage card layout. Japan-exclusive.'},
+{id:'s11',name:'Surfing Pikachu XY-P',set:'XY-P Promotional Cards',num:'264/XY-P',yr:2016,lang:'jp',rar:'Promo Holo',sp:true,pr:true,img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=surfing+pikachu+264+XY-P+japanese',pc:null,nm:'$20-$50',note:'Japanese XY-P promo. Part of 20th Anniversary promotion in Japan.'},
+];
+var CAMEO=[
+{id:'c0',name:"Bill's Maintenance",set:'Neo Genesis',num:'100/111',yr:2000,lang:'en',rar:'Uncommon Trainer',sp:false,pr:false,cameo:'Hoothoot',img:L+'N1/N1_100_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/neo-genesis?q=bills+maintenance',pc:'https://www.pricecharting.com/game/pokemon-neo-genesis/bills-maintenance-100',nm:'$2-$5',note:'Hoothoot clearly visible in the background of Bills storage lab.'},
+{id:'c1',name:'Pokemon Trader',set:'Neo Genesis',num:'102/111',yr:2000,lang:'en',rar:'Rare Trainer',sp:false,pr:false,cameo:'Hoothoot + others',img:L+'N1/N1_102_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/neo-genesis?q=pokemon+trader',pc:'https://www.pricecharting.com/game/pokemon-neo-genesis/pokemon-trader-102',nm:'$3-$8',note:'Hoothoot, Murkrow, Hoppip, Cyndaquil, Sentret, Chikorita, Totodile and Mareep all appear.'},
+{id:'c2',name:'Double Colorless Energy',set:'Aquapolis',num:'123/147',yr:2003,lang:'en',rar:'Uncommon Energy',sp:false,pr:false,cameo:'Noctowl + Hoothoot',img:null,tcg:'https://www.tcgplayer.com/search/pokemon/aquapolis?q=double+colorless+energy',pc:'https://www.pricecharting.com/game/pokemon-aquapolis/double-colorless-energy-123',nm:'$2-$5',note:'Both Noctowl AND Hoothoot appear together in this Aquapolis energy card. Rare dual cameo.'},
+{id:'c3',name:'Morty Supporter',set:'HeartGold and SoulSilver',num:'98/123',yr:2010,lang:'en',rar:'Uncommon Supporter',sp:false,pr:false,cameo:'Noctowl trainer',img:L+'HS/HS_098_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/heartgold-soulsilver?q=morty',pc:'https://www.pricecharting.com/game/pokemon-heartgold-soulsilver/morty-98',nm:'$1-$3',note:'Morty the Ghost-type Gym Leader — Noctowl canonical trainer from Gold and Silver.'},
+{id:'c4',name:"Morty's Resolve",set:'HeartGold and SoulSilver',num:'99/123',yr:2010,lang:'en',rar:'Uncommon Supporter',sp:false,pr:false,cameo:'Noctowl trainer',img:L+'HS/HS_099_R_EN_SM.png',tcg:'https://www.tcgplayer.com/search/pokemon/heartgold-soulsilver?q=morty',pc:null,nm:'$1-$3',note:'Second Morty trainer card. Both HGSS Morty cards essential for Noctowl collectors.'},
+{id:'c5',name:"Bill's Teleporter",set:'Neo Genesis',num:'91/111',yr:2000,lang:'en',rar:'Uncommon Trainer',sp:false,pr:false,cameo:'Hoothoot background',img:null,tcg:'https://www.tcgplayer.com/search/pokemon/neo-genesis?q=bills+teleporter',pc:'https://www.pricecharting.com/game/pokemon-neo-genesis/bills-teleporter-91',nm:'$1-$3',note:'Neo Genesis trainer with Gen 2 cameos including Hoothoot in Bills lab.'},
+{id:'c6',name:'Hoothoot TG12 with Sage',set:'Astral Radiance Trainer Gallery',num:'TG12/TG30',yr:2022,lang:'en',rar:'Trainer Gallery Holo Rare',sp:true,pr:false,cameo:'Sage with Hoothoot',img:L+'ASR/ASR_TG12_R_EN_SM.png',tcg:'https://www.tcgplayer.com/product/272483/pokemon-swsh10-astral-radiance-trainer-gallery-hoothoot',pc:'https://www.pricecharting.com/game/pokemon-astral-radiance/hoothoot-tg12',nm:'$8-$12',note:'Sage NPC alongside Hoothoot in the Trainer Gallery. PSA 10 sold for $52.'},
+{id:'c7',name:'Dark Ariados',set:'Neo Destiny',num:'43/105',yr:2002,lang:'en',rar:'Common',sp:false,pr:false,cameo:'Hoothoot background',img:null,tcg:'https://www.tcgplayer.com/search/pokemon/neo-destiny?q=dark+ariados',pc:'https://www.pricecharting.com/game/pokemon-neo-destiny/dark-ariados-43',nm:'$0.50',note:'Hoothoot appears in the forest night scene background.'},
+{id:'c8',name:'Togetic',set:'Neo Destiny',num:'20/105',yr:2002,lang:'en',rar:'Rare Holo',sp:false,pr:false,cameo:'Hoothoot background',img:null,tcg:'https://www.tcgplayer.com/search/pokemon/neo-destiny?q=togetic',pc:'https://www.pricecharting.com/game/pokemon-neo-destiny/togetic-20',nm:'$3-$8',note:'Hoothoot silhouettes in the dawn sky scene on this Togetic Rare Holo.'},
+{id:'c9',name:"Morty's Noctowl JP",set:'Pokemon VS Japan Only',num:'024/141',yr:2001,lang:'jp',rar:'Common Japan Exclusive',sp:false,pr:false,cameo:'Noctowl',img:null,ebay:'https://www.ebay.com/sch/i.html?_nkw=morty+noctowl+pokemon+vs+japanese',pc:null,nm:'$5-$15',note:'Japan-only VS series. Multiple Morty cards featuring Noctowl. Never released in English.'},
+];
+var HOOTHOOT=[];
+var SETS={
+  noctowl:{data:NOCTOWL,label:'🦉 Noctowl Master Set',tc:'cn',pfc:'pfn',builtIn:true},
+  hoothoot:{data:HOOTHOOT,label:'🐦 Hoothoot Master Set',tc:'ch',pfc:'pfh',builtIn:true},
+  surfing:{data:SURFING,label:'🏄 Surfing Pikachu',tc:'cs',pfc:'pfs',builtIn:true},
+  cameo:{data:CAMEO,label:'🎭 Cameo Cards',tc:'cc',pfc:'pfc',builtIn:true},
+};
+var K='pkmn-tracker-v1-';
+var cur='noctowl',filt_='all',q='',openId=null,onPage=false;
+var got={};
+Object.keys(SETS).forEach(function(k){got[k]=new Set(JSON.parse(localStorage.getItem(K+k)||'[]'));});
+var custom=JSON.parse(localStorage.getItem(K+'custom')||'{}');
+Object.keys(custom).forEach(function(k){
+  SETS[k]={data:custom[k].cards,label:custom[k].label,tc:'cx',pfc:'pfx',builtIn:false};
+  got[k]=new Set(JSON.parse(localStorage.getItem(K+'cx-'+k)||'[]'));
+  addTab(k,custom[k].poke);
+});
+function save(){try{if(cur.startsWith('cx-'))localStorage.setItem(K+'cx-'+cur,JSON.stringify([...got[cur]]));else localStorage.setItem(K+cur,JSON.stringify([...got[cur]]));}catch(e){}}
+function switchSet(k,btn){
+  if(onPage){onPage=false;document.getElementById('tracker').style.display='';document.getElementById('cl').style.display='';document.getElementById('bb').style.display='';document.querySelectorAll('.pv2').forEach(function(p){p.classList.remove('on');});}
+  cur=k;filt_='all';q='';openId=null;
+  document.getElementById('si').value='';
+  document.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.fb')[0].classList.add('on');
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  var s=SETS[k];
+  var t=document.getElementById('stitle');
+  t.className='set-title '+s.tc;
+  t.textContent=s.label;
+  document.getElementById('pfill').className='pf '+s.pfc;
+  document.getElementById('delbtn').style.display='inline-block';
+  updateStats();render();
+}
+function switchPage(pg,btn){
+  onPage=true;
+  document.getElementById('tracker').style.display='none';
+  document.getElementById('cl').style.display='none';
+  document.getElementById('bb').style.display='none';
+  document.querySelectorAll('.pv2').forEach(function(p){p.classList.remove('on');});
+  document.getElementById('pg-'+pg).classList.add('on');
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  document.getElementById('delbtn').style.display='none';
+  if(pg==='stores')ninjaHours();
+}
+function delSet(){
+  var s=SETS[cur];if(!s)return;
+  if(!confirm('Remove "'+s.label+'" from tracker?\nYour progress will be deleted.'))return;
+  var isC=cur.startsWith('cx-');
+  delete SETS[cur];delete got[cur];
+  if(isC){localStorage.removeItem(K+'cx-'+cur);delete custom[cur];localStorage.setItem(K+'custom',JSON.stringify(custom));}
+  else{localStorage.removeItem(K+cur);}
+  var tab=document.getElementById('tab-'+cur);if(tab)tab.remove();
+  var firstKey=Object.keys(SETS)[0]||'noctowl';
+  var firstTab=document.getElementById('tab-'+firstKey);
+  if(firstTab)switchSet(firstKey,firstTab);
+}
+function updateStats(){
+  var s=SETS[cur];if(!s)return;
+  var t=s.data.length,d=(got[cur]||new Set()).size,p=t?Math.round(d/t*100):0;
+  var rare=s.data.filter(function(c){return c.sp||c.pr;}).length;
+  document.getElementById('pct').textContent=p+'%';
+  document.getElementById('p-got').textContent=d;
+  document.getElementById('p-need').textContent=t-d;
+  document.getElementById('p-tot').textContent=t;
+  document.getElementById('p-rare').textContent=rare;
+  document.getElementById('ptxt').textContent=d+' of '+t;
+  document.getElementById('pfill').style.width=p+'%';
+  document.getElementById('pmsg').textContent=p===100?'Complete! 🎉':p>75?'Almost there! 🔥':p>50?'Halfway! 💪':p>25?'Keep going! 🎯':'Start hunting! 🦉';
+}
+function filt(f,btn){filt_=f;document.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');openId=null;render();}
+function search(v){q=v.toLowerCase();openId=null;render();}
+function vis(){
+  var s=SETS[cur];if(!s)return[];
+  var g=got[cur]||new Set();
+  return s.data.filter(function(c){
+    if(filt_==='en'&&c.lang!=='en')return false;
+    if(filt_==='jp'&&c.lang!=='jp')return false;
+    if(filt_==='needed'&&g.has(c.id))return false;
+    if(filt_==='collected'&&!g.has(c.id))return false;
+    if(filt_==='rare'&&!c.sp&&!c.pr)return false;
+    if(filt_==='promo'&&!c.pr)return false;
+    if(q&&!(c.name||'').toLowerCase().includes(q)&&!(c.set||'').toLowerCase().includes(q)&&!(c.num||'').toLowerCase().includes(q))return false;
+    return true;
+  });
+}
+function toggle(id,e){
+  e.stopPropagation();
+  if(!got[cur])got[cur]=new Set();
+  var g=got[cur];g.has(id)?g.delete(id):g.add(id);
+  save();updateStats();
+  var r=document.getElementById('cr-'+id);
+  if(r){var got_=g.has(id);r.classList.toggle('got',got_);r.querySelector('.cm').style.display=got_?'block':'none';r.querySelector('.ck').style.background=got_?'var(--gn2)':'var(--s2)';r.querySelector('.ck').style.borderColor=got_?'var(--gn)':'var(--bd2)';r.querySelector('.eh').textContent=got_?'Got it':'tap for info';r.querySelector('.ac').textContent=got_?'Mark as Needed':'Mark as Collected';}
+}
+function toggleOpen(id){var r=document.getElementById('cr-'+id);if(!r)return;if(openId===id){r.classList.remove('open');openId=null;return;}if(openId){var p=document.getElementById('cr-'+openId);if(p)p.classList.remove('open');}r.classList.add('open');openId=id;}
+function row(c){
+  var g=got[cur]||new Set();var ic=g.has(c.id);var io=openId===c.id;
+  var icon=cur.includes('surfing')?'🏄':cur.includes('cameo')?'🎭':cur.includes('hoothoot')?'🐦':'🦉';
+  var ih=c.img?('<img class="img" src="'+c.img+'" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">'):'';
+  var fh='<span class="ni" style="display:'+(c.img?'none':'block')+'">'+icon+'</span>';
+  var bgs='';
+  if(c.sp)bgs+='<span class="bg br">⭐ Rare</span>';
+  if(c.pr)bgs+='<span class="bg bp">Promo</span>';
+  if(c.lang==='jp')bgs+='<span class="bg bj">JP</span>';
+  if(c.lang==='en')bgs+='<span class="bg be">EN</span>';
+  if(c.cameo)bgs+='<span class="bg bc">Cameo</span>';
+  var buy=c.tcg||c.ebay||('https://www.ebay.com/sch/i.html?_nkw='+encodeURIComponent(c.name+' '+c.set+' pokemon'));
+  var blbl=c.tcg?'🃏 TCGPlayer':'🛒 eBay';
+  var pcb=c.pc?('<a class="ab ap" href="'+c.pc+'" target="_blank" onclick="event.stopPropagation()">📊 Price Guide</a>'):'<span class="ab ap" style="opacity:.3;pointer-events:none">No price data</span>';
+  var eb=(c.ebay&&c.tcg)?('<a class="ab ae" href="'+c.ebay+'" target="_blank" onclick="event.stopPropagation()">🟡 eBay</a>'):'';
+  var chkb='<button class="ab ac" onclick="toggle(\''+c.id+'\',event)">'+(ic?'Mark as Needed':'Mark as Collected')+'</button>';
+  var det='<div class="det"><div class="dg"><div class="db"><div class="dl">NM Price</div><div class="dv g">'+(c.nm||'—')+'</div></div><div class="db"><div class="dl">Year</div><div class="dv">'+(c.yr||'—')+'</div></div><div class="db"><div class="dl">Rarity</div><div class="dv" style="font-size:10px">'+(c.rar||'—')+'</div></div><div class="db"><div class="dl">Language</div><div class="dv">'+(c.lang==='en'?'🇺🇸 EN':'🇯🇵 JP')+'</div></div></div><div class="dn">'+(c.note||'')+'</div><div class="ag"><a class="ab at" href="'+buy+'" target="_blank" onclick="event.stopPropagation()">'+blbl+'</a>'+pcb+(eb||'')+chkb+'</div></div>';
+  return '<div class="cr'+(ic?' got':'')+(c.sp?' sp':'')+(io?' open':'')+'" id="cr-'+c.id+'" onclick="toggleOpen(\''+c.id+'\')"><div class="ci"><div class="iw">'+ih+fh+'</div><div class="info"><div class="nm">'+c.name+'</div><div class="st">'+c.set+'</div><div class="nu">'+(c.num||'')+(c.rar?' · '+c.rar:'')+'</div><div class="pr">'+(c.nm||'')+'</div><div class="bgs">'+bgs+'</div></div><div class="rt"><div class="ck" onclick="toggle(\''+c.id+'\',event)" style="background:'+(ic?'var(--gn2)':'var(--s2)')+';border-color:'+(ic?'var(--gn)':'var(--bd2)')+'"><span class="cm" style="display:'+(ic?'block':'none')+'">✓</span></div><div class="eh">'+(ic?'Got it':'tap for info')+'</div></div></div>'+det+'</div>';
+}
+function render(){
+  var v=vis();var cl=document.getElementById('cl');
+  if(!v.length){cl.innerHTML='<div style="text-align:center;padding:50px 20px;color:var(--tx2)"><div style="font-size:48px;margin-bottom:10px;opacity:.4">🦉</div><div style="font-size:15px;font-weight:600">No cards found</div><div style="font-size:12px;margin-top:5px;color:var(--tx3)">Try a different filter</div></div>';return;}
+  var html='';var ll='';var showSec=(filt_==='all'||filt_==='needed'||filt_==='collected'||filt_==='rare'||filt_==='promo');
+  v.forEach(function(c){if(showSec&&c.lang!==ll){html+='<div class="sl">'+(c.lang==='en'?'🇺🇸 English':'🇯🇵 Japanese')+'</div>';ll=c.lang;}html+=row(c);});
+  cl.innerHTML=html;
+}
+function checkAll(state){if(!got[cur])got[cur]=new Set();var g=got[cur];vis().forEach(function(c){state?g.add(c.id):g.delete(c.id);});save();updateStats();render();}
+function resetSet(){if(!confirm('Reset all progress for this set?'))return;got[cur]=new Set();save();updateStats();render();}
+function openModal(){document.getElementById('modal').classList.add('on');refreshCList();setTimeout(function(){document.getElementById('ai-in').focus();},300);}
+function closeModal(){document.getElementById('modal').classList.remove('on');document.getElementById('ai-in').value='';document.getElementById('ai-st').textContent='';document.getElementById('ai-btn').disabled=false;document.getElementById('ai-btn').textContent='🔍 Research and Build Set';}
+function refreshCList(){var el=document.getElementById('clist');var keys=Object.keys(custom);if(!keys.length){el.innerHTML='<div style="font-size:12px;color:var(--tx3);text-align:center;padding:8px">No custom sets yet</div>';return;}el.innerHTML=keys.map(function(k){var s=custom[k];var cnt=(got[k]||new Set()).size;var tot=s.cards?s.cards.length:0;return '<div class="ci2"><div><div class="cn2">✨ '+s.poke+'</div><div class="cc2">'+cnt+'/'+tot+' collected</div></div><div class="cbs"><button class="cbtn co" onclick="openCustom(\''+k+'\')">Open</button><button class="cbtn cd" onclick="delCustom(\''+k+'\')">Delete</button></div></div>';}).join('');}
+function openCustom(k){closeModal();var tab=document.getElementById('tab-'+k);if(tab)switchSet(k,tab);}
+function delCustom(k){if(!confirm('Delete this custom set?'))return;delete custom[k];delete SETS[k];delete got[k];localStorage.setItem(K+'custom',JSON.stringify(custom));localStorage.removeItem(K+'cx-'+k);var tab=document.getElementById('tab-'+k);if(tab)tab.remove();if(cur===k){var fk=Object.keys(SETS)[0]||'noctowl';var ft=document.getElementById('tab-'+fk);if(ft)switchSet(fk,ft);}refreshCList();}
+function addTab(k,poke){var nav=document.getElementById('tabs');var add=document.querySelector('.ta');var tab=document.createElement('button');tab.className='tab';tab.id='tab-'+k;tab.innerHTML='<span class="ti">✨</span><span class="tl" style="color:var(--gd)">'+poke.substring(0,8)+'</span>';tab.onclick=function(){switchSet(k,tab);};nav.insertBefore(tab,add);}
+function getKey(){return localStorage.getItem(K+'apikey')||'';}
+function ensureKey(){var k=getKey();if(k)return k;var i=prompt('Enter your Anthropic API key to use this feature.\n\nGet one free at: console.anthropic.com\n\n(Stored only on this device)');if(i&&i.trim().startsWith('sk-ant-')){localStorage.setItem(K+'apikey',i.trim());return i.trim();}if(i)alert('Invalid key. Should start with sk-ant-');return null;}
+async function buildSet(){
+  var poke=document.getElementById('ai-in').value.trim();if(!poke){alert('Enter a Pokemon name!');return;}
+  var key=ensureKey();if(!key)return;
+  var btn=document.getElementById('ai-btn');var st=document.getElementById('ai-st');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span>Researching '+poke+'...';st.textContent='Searching TCG databases...';
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,messages:[{role:'user',content:'List EVERY Pokemon TCG card featuring "'+poke+'" as the main named Pokemon across ALL sets — English and Japanese, promos, secret rares, everything. Return ONLY a valid JSON array. No markdown. Each object: {"id":"c0","name":"card name","set":"set name","num":"number","yr":2000,"lang":"en","rar":"rarity","sp":false,"pr":false,"nm":"$1-$5","note":"collector note","tcg":"TCGPlayer URL or null","ebay":"eBay URL or null","pc":"PriceCharting URL or null"}. Sort English first oldest to newest, then Japanese. Return ONLY the JSON array.'}]})});
+    if(!resp.ok){var e=await resp.json().catch(function(){return{};});throw new Error('API error '+resp.status+': '+((e.error&&e.error.message)?e.error.message.substring(0,80):'failed'));}
+    var data=await resp.json();var text=(data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    var s=text.indexOf('[');var e=text.lastIndexOf(']');if(s===-1||e===-1)throw new Error('No card data returned. Try again.');
+    var cards=JSON.parse(text.substring(s,e+1));if(!cards.length)throw new Error('No cards found for '+poke);
+    cards=cards.map(function(c,i){c.id='cx-'+poke.toLowerCase().replace(/\s+/g,'-')+'-'+i;return c;});
+    var k='cx-'+poke.toLowerCase().replace(/\s+/g,'-')+'-'+Date.now();
+    var sd={key:k,poke:poke,label:'✨ '+poke.charAt(0).toUpperCase()+poke.slice(1)+' Master Set',cards:cards};
+    custom[k]=sd;SETS[k]={data:cards,label:sd.label,tc:'cx',pfc:'pfx',builtIn:false};got[k]=new Set();
+    localStorage.setItem(K+'custom',JSON.stringify(custom));addTab(k,poke);
+    st.textContent='Found '+cards.length+' cards! Opening...';btn.textContent='Done!';
+    setTimeout(function(){closeModal();var tab=document.getElementById('tab-'+k);if(tab)switchSet(k,tab);btn.disabled=false;btn.textContent='🔍 Research and Build Set';},1200);
+  }catch(err){st.innerHTML='❌ '+(err.message||'Error')+'<br><span style="font-size:10px;color:var(--tx3)">Check connection and try again.</span>';btn.disabled=false;btn.textContent='🔍 Research and Build Set';}
+}
+function ninjaHours(){var now=new Date();var d=now.getDay();var h=now.getHours();var open=(d===5&&h>=15&&h<21)||(d===6&&h>=10&&h<21)||(d===0&&h>=11&&h<18);var el=document.getElementById('ninja-hrs');if(el)el.innerHTML='<span class="hb '+(open?'ho':'hc')+'">'+(open?'Open Now':'Closed Now')+'</span>';}
+function nearMe(){var s=document.getElementById('gps-st');s.style.display='block';s.textContent='Getting location...';if(!navigator.geolocation){s.textContent='Location not supported.';return;}navigator.geolocation.getCurrentPosition(function(p){window.open('https://maps.apple.com/?q=pokemon+card+shop&sll='+p.coords.latitude+','+p.coords.longitude+'&z=12','_blank');s.textContent='Opening nearby shops...';},function(){window.open('https://maps.apple.com/?q=pokemon+card+shop+near+Oceanside+CA','_blank');s.textContent='Using default location.';});}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+updateStats();render();ninjaHours();
+</script>
+</body>
+</html>
